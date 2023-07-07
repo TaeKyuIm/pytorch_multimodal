@@ -11,9 +11,6 @@ def preprocess(df):
     tabular.drop(columns=drop_columns, inplace=True)
     tabular = tabular.drop_duplicates().values
     
-    # tabular = df.iloc[:, 11:36]
-    # tabular.drop(columns=['MaxScrewRPM', 'AverageScrewRPM', 'AverageBackPressure'], inplace=True)
-    # tabular = tabular.drop_duplicates().values
     
     temp = df.iloc[:, 10].values
     y = np.array([temp[i] for i in range(0, len(temp), signal_length)])
@@ -56,7 +53,7 @@ class FILAB_multimodal(nn.Module):
             nn.Conv1d(in_channels=cnn[3], out_channels=cnn[4], kernel_size=cnn[2]),
             nn.BatchNorm1d(cnn[4]),
             nn.ReLU(),
-            nn.AdaptiveAvgPool1d(1) # (batch size, 32, 1) -> squeeze(-1) 해줘야 됨.
+            nn.AdaptiveAvgPool1d(1) #  -> squeeze(-1) 해줘야 됨.
         )
 
         self.timeseries_rnn = nn.Sequential(
@@ -68,7 +65,7 @@ class FILAB_multimodal(nn.Module):
             nn.ReLU(),
             nn.Linear(rnn[5], rnn[4])
         )
-        # 32 + 16 + 16 = 64
+
         self.calculator = nn.Sequential(
             nn.Linear(cal[0], cal[1]),
             nn.ReLU(),
